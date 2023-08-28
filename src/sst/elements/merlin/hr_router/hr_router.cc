@@ -116,6 +116,10 @@ hr_router::~hr_router()
 
     delete topo;
     delete arb;
+
+    // FL:
+    delete [] port_bws;
+    delete [] port_window_tp;
 }
 
 hr_router::hr_router(ComponentId_t cid, Params& params) :
@@ -186,15 +190,6 @@ hr_router::hr_router(ComponentId_t cid, Params& params) :
         flit_size *= UnitAlgebra("8b/B");
     }
 
-    // Link BW default.  Can be overwritten using logical groups
-    std::string link_bw_s = params.find<std::string>("link_bw");
-    UnitAlgebra link_bw(link_bw_s);
-
-    if ( link_bw.hasUnits("B/s") ) {
-        // Need to convert to bits per second
-        link_bw *= UnitAlgebra("8b/B");
-    }
-
     // Cross bar bandwidth
     std::string xbar_bw_s = params.find<std::string>("xbar_bw");
     if ( xbar_bw_s == "" ) {
@@ -245,6 +240,52 @@ hr_router::hr_router(ComponentId_t cid, Params& params) :
     pc_params.insert("oql_track_port", params.find<std::string>("oql_track_port","false"));
     pc_params.insert("oql_track_remote", params.find<std::string>("oql_track_remote","false"));
 
+    // Link BW default.  Can be overwritten using logical groups
+    std::string link_bw_s = params.find<std::string>("link_bw");
+    UnitAlgebra link_bw(link_bw_s);
+
+    if ( link_bw.hasUnits("B/s") ) {
+        // Need to convert to bits per second
+        link_bw *= UnitAlgebra("8b/B");
+    }
+
+    // FL: set up reconfigurable BW links. Defaults to uniform allocation and can be reconfigure during simulation
+    port_bws = new UnitAlgebra[num_ports];
+
+    port_window_tp = new double[num_ports];
+    for (int i = 0; i < num_ports; i++) {
+        port_window_tp[i] = -1;
+    }
+
+    string reconfig_rtr_str = params.find<std::string>("reconfig_rtr");
+    if (reconfig_rtr_str == "1") 
+        reconfig_rtr = true; 
+    else 
+        reconfig_rtr = false;
+
+    UnitAlgebra uniform_link_bw("0");
+    if (reconfig_rtr) {
+        max_rtr_bw = params.find<UnitAlgebra>("max_rtr_bw");
+
+        if ( max_rtr_bw.hasUnits("B/s") ) {
+            // Need to convert to bits per second
+            max_rtr_bw *= UnitAlgebra("8b/B");
+        }
+
+        // set all links to uniform allocations by default
+        // overriden later in simulation
+        uniform_link_bw = max_rtr_bw;
+
+        UnitAlgebra(to_string(num_ports));
+        uniform_link_bw /= num_ports;
+
+        for (int i = 0; i < num_ports; i++) {
+            port_bws[i] = uniform_link_bw;
+        }
+
+        output.output("Configuring hr_router %d -- num_ports %d -- max_rtr_bw %s -- unif_bw per link %s\n", id, num_ports, max_rtr_bw.toStringBestSI().c_str(), uniform_link_bw.toStringBestSI().c_str());
+    }
+
     for ( int i = 0; i < num_ports; i++ ) {
         in_port_busy[i] = 0;
         out_port_busy[i] = 0;
@@ -259,12 +300,37 @@ hr_router::hr_router(ComponentId_t cid, Params& params) :
         // output_buf_size, input_latency, output_latency).
 
         pc_params.insert("port_name", port_name.str());
-        pc_params.insert("link_bw", getLogicalGroupParam(params,topo,i,"link_bw") );
+        
+        // FL: 
+        if (!reconfig_rtr) 
+        {
+            pc_params.insert("link_bw", getLogicalGroupParam(params,topo,i,"link_bw") );
+        } else 
+        {
+            string unif_link_bw_str = uniform_link_bw.toStringBestSI().c_str();
+            pc_params.insert("link_bw", unif_link_bw_str);
+
+            string monitor_window_str = params.find<std::string>("monitor_window");
+            pc_params.insert("monitor_window", monitor_window_str.c_str());
+        } 
         pc_params.insert("input_latency", getLogicalGroupParam(params,topo,i,"input_latency","0ns"));
         pc_params.insert("output_latency", getLogicalGroupParam(params,topo,i,"output_latency","0ns"));
         pc_params.insert("input_buf_size", getLogicalGroupParam(params,topo,i,"input_buf_size"));
         pc_params.insert("output_buf_size", getLogicalGroupParam(params,topo,i,"output_buf_size"));
-        pc_params.insert("dlink_thresh", getLogicalGroupParam(params,topo,i,"dlink_thresh", "-1"));
+
+        // use for non-Flex-LION links
+        if (!reconfig_rtr)
+        {
+            // I think threshold is the proportion of utilization BW in the link
+            pc_params.insert("dlink_thresh", getLogicalGroupParam(params,topo,i,"dlink_thresh", "-1"));
+            pc_params.insert("reconfig_link", "0");
+        } else 
+        {
+            // FL: use for dynamic BW links --> ToDo: implement how to configure second parameter (different for each port, configurable in config file)
+            pc_params.insert("reconfig_link", "1");
+            
+        }
+        
         pc_params.insert("vn_remap_shm", vn_remap_shm);
         pc_params.insert("vn_remap_shm_size", std::to_string(vn_remap_shm_size));
         pc_params.insert("num_vns", std::to_string(num_vns));
@@ -561,6 +627,67 @@ hr_router::sendCtrlEvent(CtrlRtrEvent* ev, int port) {
     ports[port]->sendCtrlEvent(ev);
 }
 
+// FL:
+void 
+hr_router::recvMonitorEvent(int port, MonitorEvent* mev)
+{
+    output.output("hr_router %d ::CtrlRtrEvent::MONITOR_LINK received!\n", id);
+    output.output("--> Port %d -- Window TP %f \n\n", port, mev->getWindowTP());
+
+    if (num_ports == 1) {
+        return;
+    }
+
+    port_window_tp[port] = mev->getWindowTP();
+
+    // check if all ports have sent TP status
+    for (int i = 0; i < num_ports; i++) {
+        if (port_window_tp[i] < 0) return;
+    }
+
+    // insert arbitrary BW re-allocation algorithm
+    // Che-Yu: This will be your ML 
+    // --> Test Alg (Replace Me): for a n port router, creates 2n-1 segments
+    // Each reconfigure event gives n segments to single highest TP link, and 1 segment to the other n-1 links
+    int max_port = -1;
+    double max_val = -1;
+
+    for (int i = 0; i < num_ports; i++) {
+        if (port_window_tp[i] > max_val) {
+            max_val = port_window_tp[i];
+            max_port = i;
+        }
+    }
+
+    // reset TP window values
+    for (int i = 0; i < num_ports; i++) {
+        port_window_tp[i] = -1;
+    }
+
+    UnitAlgebra bw_segment("0");
+    bw_segment = max_rtr_bw / num_ports; // n 
+
+    output.output("$$ hr_router %d --> Window -- max %d -- BW seg %s\n\n", id, max_port, bw_segment.toStringBestSI().c_str());
+    
+    if (max_port < 0 || max_port >= num_ports) {
+        fatal(CALL_INFO_LONG,-1,"ERROR: router %d recvReconfigEvent() has out of bounds max_port\n",id);
+    }
+
+    // send reconfigure event to ports
+    for (int i = 0; i < num_ports; i++) {
+        if (i == max_port) {
+            port_bws[max_port] = bw_segment * (num_ports / 2);
+            output.output("port %d -- new_max_BW %f\n", max_port, port_bws[max_port].getDoubleValue());
+            ReconfigEvent* rev_max = new ReconfigEvent(port_bws[max_port]);
+            ports[max_port]->recvCtrlEvent(rev_max);
+        } else {
+            port_bws[i] = bw_segment;
+            ReconfigEvent* rev = new ReconfigEvent(port_bws[i]);
+            ports[i]->recvCtrlEvent(rev);
+        }
+    }
+}
+
 void
 hr_router::recvCtrlEvent(int port, CtrlRtrEvent* ev) {
     // Check to see what type of event it is
@@ -568,6 +695,10 @@ hr_router::recvCtrlEvent(int port, CtrlRtrEvent* ev) {
     case CtrlRtrEvent::TOPOLOGY:
         // Event just gets sent on to topolgy object
         topo->recvTopologyEvent(port,static_cast<TopologyEvent*>(ev));
+        break;
+    // FL:    
+    case CtrlRtrEvent::PORT_MONITOR: 
+        recvMonitorEvent(port, static_cast<MonitorEvent*>(ev));
         break;
     default:
         // Route the ctrl event

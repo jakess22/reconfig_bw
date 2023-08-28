@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<testsuites disabled="0" errors="0" failures="0" tests="13" time="2312.5981872081757" name="SST TESTING FRAMEWORKS">
+	<testsuite disabled="0" errors="0" failures="0" name="testsuite_default_merlin" skipped="2" tests="13" time="2312.5981872081757">
+		<testcase name="test_merlin_dragon_128" time="1.053489" timestamp="2023_0816_21:57:38.234335 utc" classname="testcase_merlin_Component"/>
+		<testcase name="test_merlin_dragon_128_fl" time="1.128485" timestamp="2023_0816_21:57:39.287967 utc" classname="testcase_merlin_Component"/>
+		<testcase name="test_merlin_dragon_128_platform" time="1.801393" timestamp="2023_0816_21:57:40.416544 utc" classname="testcase_merlin_Component"/>
+		<testcase name="test_merlin_dragon_128_platform_cm" time="1.528914" timestamp="2023_0816_21:57:42.218033 utc" classname="testcase_merlin_Component"/>
+		<testcase name="test_merlin_dragon_72" time="0.790783" timestamp="2023_0816_21:57:43.747065 utc" classname="testcase_merlin_Component"/>
+		<testcase name="test_merlin_fattree_128" time="1.793074" timestamp="2023_0816_21:57:44.537962 utc" classname="testcase_merlin_Component"/>
+		<testcase name="test_merlin_fattree_256" time="8.137956" timestamp="2023_0816_21:57:46.331152 utc" classname="testcase_merlin_Component"/>
+		<testcase name="test_merlin_hyperx_128" time="0.898419" timestamp="2023_0816_21:57:54.469199 utc" classname="testcase_merlin_Component"/>
+		<testcase name="test_merlin_polarfly_455" time="1146.126679" timestamp="2023_0816_21:57:55.367711 utc" classname="testcase_merlin_Component">
+			<skipped type="skipped" message="Polarfly construction requires sympy"/>
+		</testcase>
+		<testcase name="test_merlin_polarstar_504" time="1146.126740" timestamp="2023_0816_21:57:55.367828 utc" classname="testcase_merlin_Component">
+			<skipped type="skipped" message="Polarstar construction requires sympy"/>
+		</testcase>
+		<testcase name="test_merlin_torus_128" time="1.936462" timestamp="2023_0816_21:57:55.367891 utc" classname="testcase_merlin_Component"/>
+		<testcase name="test_merlin_torus_5_trafficgen" time="0.465741" timestamp="2023_0816_21:57:57.304411 utc" classname="testcase_merlin_Component"/>
+		<testcase name="test_merlin_torus_64" time="0.810052" timestamp="2023_0816_21:57:57.770243 utc" classname="testcase_merlin_Component"/>
+	</testsuite>
+</testsuites>

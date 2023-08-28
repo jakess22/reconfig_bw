@@ -17,21 +17,31 @@ from sst.merlin.endpoint import *
 from sst.merlin.interface import *
 from sst.merlin.topology import *
 
+from sst.ember import *
+
+
 if __name__ == "__main__":
 
 
+    PlatformDefinition.setCurrentPlatform("firefly-defaults")
+
     ### Setup the topology
-    topo = topoHyperX()
-    topo.shape = "4x4"
-    topo.width = "2x2"
-    topo.local_ports = 8
-    topo.algorithm = ["DOR","MIN-A"]
+    topo = topoFatTree()
+    topo.shape = "2,2:2,2:1"
     
     # Set up the routers
     router = hr_router()
-    router.link_bw = "4GB/s"
+
+    # FL
+    router.reconfig_rtr = "0"
+    router.max_rtr_bw = "1GB/s"
+    router.monitor_window = "3us"
+
+    # commonly used, but not needed for FL router
+    router.link_bw = "1GB/s"
+
     router.flit_size = "8B"
-    router.xbar_bw = "6GB/s"
+    router.xbar_bw = "1GB/s"
     router.input_latency = "20ns"
     router.output_latency = "20ns"
     router.input_buf_size = "4kB"
@@ -43,45 +53,39 @@ if __name__ == "__main__":
     topo.link_latency = "20ns"
     
     ### set up the endpoint
-    networkif = LinkControl()
+    networkif = ReorderLinkControl()
     networkif.link_bw = "4GB/s"
     networkif.input_buf_size = "1kB"
     networkif.output_buf_size = "1kB"
 
-    networkif2 = LinkControl()
-    networkif2.link_bw = "4GB/s"
-    networkif2.input_buf_size = "1kB"
-    networkif2.output_buf_size = "1kB"
-
     # Set up VN remapping
-    networkif.vn_remap = [0]
-    networkif2.vn_remap = [1]
+    #networkif.vn_remap = [0]
     
-    ep = TestJob(0,topo.getNumNodes() // 2)
+    ep = EmberMPIJob(0,topo.getNumNodes())
     ep.network_interface = networkif
-    #ep.num_messages = 10
-    #ep.message_size = "8B"
-    #ep.send_untimed_bcast = False
-        
-    ep2 = TestJob(1,topo.getNumNodes() // 2)
-    ep2.network_interface = networkif2
-    #ep.num_messages = 10
-    #ep.message_size = "8B"
-    #ep.send_untimed_bcast = False
-        
+    ep.addMotif("Init")
+    ep.addMotif("Allreduce")
+    ep.addMotif("Allreduce")
+    #ep.addMotif("Allreduce")
+
+    ep.addMotif("Fini")
+    ep.nic.nic2host_lat= "100ns"
+
     system = System()
     system.setTopology(topo)
     system.allocateNodes(ep,"linear")
-    system.allocateNodes(ep2,"linear")
 
-    system.build()
-    
+    system.build()    
 
     sst.setStatisticLoadLevel(9)
+    sst.enableAllStatisticsForAllComponents({"type":"sst.AccumulatorStatistic"})
 
-    sst.setStatisticOutput("sst.statOutputCSV");
+
+    sst.setStatisticOutput("sst.statOutputCSV")
+    #sst.setStatisticOutput("sst.statOutputConsole") 
+
     sst.setStatisticOutputOptions({
-        "filepath" : "stats.csv",
+        "filepath" : "dyn_stats.csv",
         "separator" : ", "
     })
 

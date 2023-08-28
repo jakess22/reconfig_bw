@@ -1,0 +1,6 @@
+/home/jakess22/reconfig_bw/sst_test_outputs/tmp_data/qostest_Folder/generateNidListQOS.py:19: SyntaxWarning: "is" with a literal. Did you mean "=="?
+  if len(args) is 2 :
+/home/jakess22/reconfig_bw/sst_test_outputs/tmp_data/qostest_Folder/generateNidListQOS.py:33: SyntaxWarning: "is" with a literal. Did you mean "=="?
+  if len(args) is 2 :
+/home/jakess22/reconfig_bw/sst_test_outputs/tmp_data/qostest_Folder/generateNidListQOS.py:153: SyntaxWarning: "is" with a literal. Did you mean "=="?
+  if len(_nids) is 0 :

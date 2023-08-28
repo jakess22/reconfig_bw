@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<testsuites disabled="0" errors="0" failures="0" tests="10" time="5170.968962669373" name="SST TESTING FRAMEWORKS">
+	<testsuite disabled="0" errors="0" failures="0" name="testsuite_default_prospero" skipped="4" tests="10" time="5170.968962669373">
+		<testcase name="test_prospero_binary_using_PIN_traces" time="1284.418708" timestamp="2023_0816_22:00:13.678807 utc" classname="testcase_prospero">
+			<skipped type="skipped" message="test_prospero_binary_using_PIN_traces: Requires PIN, but Env Var 'INTEL_PIN_DIR' is not found or path does not exist."/>
+		</testcase>
+		<testcase name="test_prospero_binary_using_TAR_traces" time="3.129226" timestamp="2023_0816_22:00:13.678924 utc" classname="testcase_prospero"/>
+		<testcase name="test_prospero_binary_withtimingdram_using_PIN_traces" time="1287.548198" timestamp="2023_0816_22:00:16.808268 utc" classname="testcase_prospero">
+			<skipped type="skipped" message="test_prospero_binary_withtimingdram_using_PIN_traces: Requires PIN, but Env Var 'INTEL_PIN_DIR' is not found or path does not exist."/>
+		</testcase>
+		<testcase name="test_prospero_binary_withtimingdram_using_TAR_traces" time="1.179340" timestamp="2023_0816_22:00:16.808423 utc" classname="testcase_prospero"/>
+		<testcase name="test_prospero_compressed_using_TAR_traces" time="2.439185" timestamp="2023_0816_22:00:17.987869 utc" classname="testcase_prospero"/>
+		<testcase name="test_prospero_compressed_withtimingdram_using_TAR_traces" time="1.188340" timestamp="2023_0816_22:00:20.427201 utc" classname="testcase_prospero"/>
+		<testcase name="test_prospero_text_using_PIN_traces" time="1292.355587" timestamp="2023_0816_22:00:21.615686 utc" classname="testcase_prospero">
+			<skipped type="skipped" message="test_prospero_text_using_PIN_traces: Requires PIN, but Env Var 'INTEL_PIN_DIR' is not found or path does not exist."/>
+		</testcase>
+		<testcase name="test_prospero_text_using_TAR_traces" time="2.539876" timestamp="2023_0816_22:00:21.615828 utc" classname="testcase_prospero"/>
+		<testcase name="test_prospero_text_withtimingdram_using_PIN_traces" time="1294.895704" timestamp="2023_0816_22:00:24.155811 utc" classname="testcase_prospero">
+			<skipped type="skipped" message="test_prospero_text_withtimingdram_using_PIN_traces: Requires PIN, but Env Var 'INTEL_PIN_DIR' is not found or path does not exist."/>
+		</testcase>
+		<testcase name="test_prospero_text_withtimingdram_using_TAR_traces" time="1.274798" timestamp="2023_0816_22:00:24.155953 utc" classname="testcase_prospero"/>
+	</testsuite>
+</testsuites>

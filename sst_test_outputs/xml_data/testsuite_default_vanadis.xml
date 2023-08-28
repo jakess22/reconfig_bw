@@ -1,0 +1,60 @@
+<?xml version="1.0" ?>
+<testsuites disabled="0" errors="0" failures="0" tests="55" time="739.1400315761566" name="SST TESTING FRAMEWORKS">
+	<testsuite disabled="0" errors="0" failures="0" name="testsuite_default_vanadis" skipped="0" tests="55" time="739.1400315761566">
+		<testcase name="test_vanadis_short_tests_001_small_basic_io_hello_world_mipsel_" time="0.761823" timestamp="2023_0816_22:00:53.630021 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_002_small_basic_io_hello_world_riscv64_" time="0.788210" timestamp="2023_0816_22:00:54.391931 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_003_small_basic_io_hello_world_cpp_mipsel_" time="3.456269" timestamp="2023_0816_22:00:55.180206 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_004_small_basic_io_hello_world_cpp_riscv64_" time="3.240957" timestamp="2023_0816_22:00:58.636553 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_005_small_basic_io_printf_check_mipsel_" time="1.239258" timestamp="2023_0816_22:01:01.877600 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_006_small_basic_io_printf_check_riscv64_" time="1.205037" timestamp="2023_0816_22:01:03.116935 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_007_small_basic_io_openat_mipsel_" time="1.337162" timestamp="2023_0816_22:01:04.322040 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_008_small_basic_io_openat_riscv64_" time="1.194825" timestamp="2023_0816_22:01:05.659265 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_009_small_basic_io_read_write_mipsel_" time="1.810230" timestamp="2023_0816_22:01:06.854153 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_010_small_basic_io_read_write_riscv64_" time="1.677708" timestamp="2023_0816_22:01:08.664451 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_011_small_basic_io_unlink_mipsel_" time="1.109739" timestamp="2023_0816_22:01:10.342226 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_012_small_basic_io_unlink_riscv64_" time="0.973418" timestamp="2023_0816_22:01:11.452029 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_013_small_basic_io_unlinkat_mipsel_" time="1.077405" timestamp="2023_0816_22:01:12.425512 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_014_small_basic_io_unlinkat_riscv64_" time="0.978824" timestamp="2023_0816_22:01:13.502981 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_015_small_basic_math_sqrt_double_mipsel_" time="44.108355" timestamp="2023_0816_22:01:14.481871 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_016_small_basic_math_sqrt_double_riscv64_" time="44.004944" timestamp="2023_0816_22:01:58.590313 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_017_small_basic_math_sqrt_float_mipsel_" time="46.031224" timestamp="2023_0816_22:02:42.595375 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_018_small_basic_math_sqrt_float_riscv64_" time="43.468337" timestamp="2023_0816_22:03:28.626694 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_019_small_basic_ops_test_branch_mipsel_" time="5.716465" timestamp="2023_0816_22:04:12.095119 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_020_small_basic_ops_test_branch_riscv64_" time="4.421694" timestamp="2023_0816_22:04:17.811682 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_021_small_basic_ops_test_shift_mipsel_" time="37.298083" timestamp="2023_0816_22:04:22.233465 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_022_small_basic_ops_test_shift_riscv64_" time="26.929826" timestamp="2023_0816_22:04:59.531629 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_023_small_misc_stream_mipsel_" time="26.430964" timestamp="2023_0816_22:05:26.461553 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_024_small_misc_stream_riscv64_" time="19.931703" timestamp="2023_0816_22:05:52.892613 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_025_small_misc_gettime_mipsel_" time="1.027984" timestamp="2023_0816_22:06:12.824416 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_026_small_misc_gettime_riscv64_" time="0.942167" timestamp="2023_0816_22:06:13.852484 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_027_small_misc_splitLoad_mipsel_" time="1.737513" timestamp="2023_0816_22:06:14.794720 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_028_small_misc_splitLoad_riscv64_" time="1.914690" timestamp="2023_0816_22:06:16.532300 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_029_small_misc_mt_dgemm_mipsel_" time="35.305281" timestamp="2023_0816_22:06:18.447068 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_030_small_misc_mt_dgemm_riscv64_" time="24.819419" timestamp="2023_0816_22:06:53.752439 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_031_small_misc_stream_fortran_mipsel_" time="23.332201" timestamp="2023_0816_22:07:18.571954 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_032_small_misc_stream_fortran_riscv64_" time="23.936117" timestamp="2023_0816_22:07:41.904256 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_033_small_misc_uname_mipsel_" time="1.134879" timestamp="2023_0816_22:08:05.840473 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_034_small_misc_uname_riscv64_" time="1.036546" timestamp="2023_0816_22:08:06.975445 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_035_small_misc_fork_mipsel_gold1" time="2.338801" timestamp="2023_0816_22:08:08.012066 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_036_small_misc_fork_mipsel_gold2" time="1.997515" timestamp="2023_0816_22:08:10.350935 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_037_small_misc_fork_riscv64_gold1" time="1.888782" timestamp="2023_0816_22:08:12.348541 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_038_small_misc_fork_riscv64_gold2" time="1.722013" timestamp="2023_0816_22:08:14.237414 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_039_small_misc_clone_mipsel_gold1" time="2.047538" timestamp="2023_0816_22:08:15.959495 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_040_small_misc_clone_mipsel_gold2" time="1.749158" timestamp="2023_0816_22:08:18.007118 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_041_small_misc_clone_riscv64_gold1" time="1.772946" timestamp="2023_0816_22:08:19.756366 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_042_small_misc_clone_riscv64_gold2" time="1.549465" timestamp="2023_0816_22:08:21.529384 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_043_small_misc_pthread_mipsel_gold1" time="2.762778" timestamp="2023_0816_22:08:23.078923 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_044_small_misc_pthread_mipsel_gold2" time="2.095260" timestamp="2023_0816_22:08:25.841772 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_045_small_misc_pthread_riscv64_gold1" time="2.555716" timestamp="2023_0816_22:08:27.937105 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_046_small_misc_pthread_riscv64_gold2" time="2.144090" timestamp="2023_0816_22:08:30.492898 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_047_small_misc_openmp_mipsel_4core" time="7.423063" timestamp="2023_0816_22:08:32.637077 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_048_small_misc_openmp_mipsel_4thread" time="4.504684" timestamp="2023_0816_22:08:40.060245 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_049_small_misc_openmp_mipsel_2core_2thread" time="5.734933" timestamp="2023_0816_22:08:44.565026 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_050_small_misc_openmp_riscv64_4core" time="6.733852" timestamp="2023_0816_22:08:50.300068 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_051_small_misc_openmp_riscv64_4thread" time="4.186576" timestamp="2023_0816_22:08:57.034023 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_052_small_misc_openmp_riscv64_2core_2thread" time="5.310209" timestamp="2023_0816_22:09:01.220690 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_053_small_misc_openmp2_riscv64_16core" time="57.428554" timestamp="2023_0816_22:09:06.530993 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_054_small_misc_openmp2_riscv64_32thread" time="75.155635" timestamp="2023_0816_22:10:03.959645 utc" classname="testcase_vanadis"/>
+		<testcase name="test_vanadis_short_tests_055_small_misc_openmp2_riscv64_4core_8thread" time="113.659208" timestamp="2023_0816_22:11:19.115380 utc" classname="testcase_vanadis"/>
+	</testsuite>
+</testsuites>

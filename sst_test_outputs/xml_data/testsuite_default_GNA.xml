@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<testsuites disabled="0" errors="0" failures="0" tests="1" time="0.3840925693511963" name="SST TESTING FRAMEWORKS">
+	<testsuite disabled="0" errors="0" failures="0" name="testsuite_default_GNA" skipped="0" tests="1" time="0.3840925693511963">
+		<testcase name="test_GNA_1" time="0.384093" timestamp="2023_0816_21:38:54.511679 utc" classname="testcase_GNA_Component"/>
+	</testsuite>
+</testsuites>

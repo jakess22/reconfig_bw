@@ -1,0 +1,38 @@
+--- /home/jakess22/reconfig_bw/sst_test_outputs/run_data/test_qos-hyperx.out
++++ /home/jakess22/reconfig_bw/src/sst/elements/ember/tests/refFiles/test_qos-hyperx.out
+@@ -5,5 +5,5 @@
+ EMBER: network: BW=4GB/s pktSize=2048B flitSize=8B
+-set merlinParams portcontrol.output_arb=merlin.arb.output.qos.multi
+-set merlinParams portcontrol.arbitration.qos_settings=[25,25,25,25]
+-EMBER: Job=1, nidList='338,315,133,401,78,53,455,373,467,344,71...'
++set merlinParams portcontrol:output_arb=merlin.arb.output.qos.multi
++set merlinParams portcontrol:arbitration:qos_settings=[25,25,25,25]
++EMBER: Job=1, nidList='364,299,45,39,423,498,85,283,323,508,126...'
+ EMBER: Motif='Init'
+@@ -12,3 +12,3 @@
+ EMBER: Motif='Fini'
+-EMBER: Job=2, nidList='493,277,384,216,371,175,72,211,66,312,45...'
++EMBER: Job=2, nidList='496,490,398,491,92,33,64,343,70,316,1,36...'
+ EMBER: Motif='Init'
+@@ -17,3 +17,3 @@
+ EMBER: Motif='Fini'
+-EMBER: Job=3, nidList='259,17,383,486,83,222,274,490,333,93,157...'
++EMBER: Job=3, nidList='197,467,218,19,148,149,53,258,411,324,15...'
+ EMBER: Motif='Init'
+@@ -22,3 +22,3 @@
+ EMBER: Motif='Fini'
+-EMBER: Job=4, nidList='172,64,46,156,166,483,440,434,81,461,3,2...'
++EMBER: Job=4, nidList='306,438,331,140,77,262,3,18,406,353,54,2...'
+ EMBER: Motif='Init'
+@@ -27,6 +27,6 @@
+ EMBER: Motif='Fini'
+-Allreduce: ranks 128, loop 1, 1 double(s), latency 367.077 us
+-Allreduce: ranks 128, loop 1, 1 double(s), latency 363.675 us
+-Allreduce: ranks 128, loop 1, 1 double(s), latency 361.201 us
+-Allreduce: ranks 128, loop 1, 1 double(s), latency 364.005 us
+-Simulation is complete, simulated time: 2.7787 ms
++Allreduce: ranks 128, loop 1, 1 double(s), latency 365.700 us
++Allreduce: ranks 128, loop 1, 1 double(s), latency 370.084 us
++Allreduce: ranks 128, loop 1, 1 double(s), latency 367.638 us
++Allreduce: ranks 128, loop 1, 1 double(s), latency 364.392 us
++Simulation is complete, simulated time: 2.76821 ms

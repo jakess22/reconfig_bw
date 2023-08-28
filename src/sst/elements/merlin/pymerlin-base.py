@@ -702,11 +702,14 @@ class hr_router(RouterTemplate):
     def __init__(self):
         RouterTemplate.__init__(self)
 
-        self._declareParams("params",["link_bw","flit_size","xbar_bw","input_latency","output_latency","input_buf_size","output_buf_size",
+        self._declareParams("params",["link_bw", "flit_size","xbar_bw","input_latency","output_latency","input_buf_size","output_buf_size",
                                       "xbar_arb","network_inspectors","oql_track_port","oql_track_remote","num_vns","vn_remap","vn_remap_shm"])
 
         self._declareParams("params",["qos_settings"],"portcontrol.arbitration.")
         self._declareParams("params",["output_arb", "enable_congestion_management", "cm_outstanding_threshold", "cm_incast_threshold"],"portcontrol.")
+
+        # FL:
+        self._declareParams("params", ["reconfig_rtr", "max_rtr_bw", "monitor_window"])
 
         self._setCallbackOnWrite("qos_settings",self._qos_callback)
 

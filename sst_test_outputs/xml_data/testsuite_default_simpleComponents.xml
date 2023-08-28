@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<testsuites disabled="0" errors="0" failures="0" tests="10" time="3.9344093799591064" name="SST TESTING FRAMEWORKS">
+	<testsuite disabled="0" errors="0" failures="0" name="testsuite_default_simpleComponents" skipped="0" tests="10" time="3.9344093799591064">
+		<testcase name="test_basic_clocks" time="0.407384" timestamp="2023_0816_22:00:49.330988 utc" classname="testcase_simpleComponents"/>
+		<testcase name="test_basic_links" time="0.405770" timestamp="2023_0816_22:00:49.738471 utc" classname="testcase_simpleComponents"/>
+		<testcase name="test_basic_params" time="0.417127" timestamp="2023_0816_22:00:50.144352 utc" classname="testcase_simpleComponents"/>
+		<testcase name="test_basic_simlifecycle" time="0.393117" timestamp="2023_0816_22:00:50.561590 utc" classname="testcase_simpleComponents"/>
+		<testcase name="test_basic_statistics_0" time="0.406525" timestamp="2023_0816_22:00:50.954818 utc" classname="testcase_simpleComponents"/>
+		<testcase name="test_basic_statistics_1" time="0.380960" timestamp="2023_0816_22:00:51.361457 utc" classname="testcase_simpleComponents"/>
+		<testcase name="test_basic_statistics_2" time="0.387526" timestamp="2023_0816_22:00:51.742535 utc" classname="testcase_simpleComponents"/>
+		<testcase name="test_basic_subcomponent" time="0.339721" timestamp="2023_0816_22:00:52.130177 utc" classname="testcase_simpleComponents"/>
+		<testcase name="test_example_0" time="0.411088" timestamp="2023_0816_22:00:52.470016 utc" classname="testcase_simpleComponents"/>
+		<testcase name="test_example_1" time="0.385191" timestamp="2023_0816_22:00:52.881221 utc" classname="testcase_simpleComponents"/>
+	</testsuite>
+</testsuites>

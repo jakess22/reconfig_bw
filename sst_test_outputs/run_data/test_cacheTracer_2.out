@@ -1,0 +1,5 @@
+l2cache: No MSHR lookup latency provided (mshr_latency_cycles)...intrapolated to 5 cycles.
+memory, WARNING: Memories no longer inherit address regions from directories and no region parameters (addr_range_start, addr_range_end, interleave_size, interleave_step) were detected. All addresses will map to this memory: if this is intended, you may ignore this warning or set addr_range_start to 0 in your input deck to eliminate this warning.
+Writing trace to file: test_cacheTracer_2_mem_ref_trace.txt
+Writing stats to file: test_cacheTracer_2_mem_ref_stats.txt
+Simulation is complete, simulated time: 874 ns

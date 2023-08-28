@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<testsuites disabled="0" errors="0" failures="0" tests="4" time="2.759906530380249" name="SST TESTING FRAMEWORKS">
+	<testsuite disabled="0" errors="0" failures="0" name="testsuite_default_SiriusZodiacTrace" skipped="0" tests="4" time="2.759906530380249">
+		<testcase name="test_Sirius_Zodiac_128" time="1.256583" timestamp="2023_0816_22:13:12.779597 utc" classname="testcase_SiriusZodiacTrace"/>
+		<testcase name="test_Sirius_Zodiac_16" time="0.462092" timestamp="2023_0816_22:13:14.036284 utc" classname="testcase_SiriusZodiacTrace"/>
+		<testcase name="test_Sirius_Zodiac_27" time="0.488504" timestamp="2023_0816_22:13:14.498497 utc" classname="testcase_SiriusZodiacTrace"/>
+		<testcase name="test_Sirius_Zodiac_64" time="0.552727" timestamp="2023_0816_22:13:14.987123 utc" classname="testcase_SiriusZodiacTrace"/>
+	</testsuite>
+</testsuites>

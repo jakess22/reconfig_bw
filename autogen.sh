@@ -10,10 +10,10 @@ if [ -z $LIBTOOL ] ; then
     LIBTOOL=$(type -P "${LIBTOOLIZE%???}")
 fi
 
-if [ -z $LIBTOOL ] || [ -z $LIBTOOLIZE ] ; then
-    echo "Unable to find working libtool. [$LIBTOOL][$LIBTOOLIZE]"
-    exit 1
-fi
+#if [ -z $LIBTOOL ] || [ -z $LIBTOOLIZE ] ; then
+#    echo "Unable to find working libtool. [$LIBTOOL][$LIBTOOLIZE]"
+#    exit 1
+#fi
 
 # Make a new Makefile.am in src
 BASE_DIR=`pwd`

@@ -12,6 +12,8 @@
 // This file is part of the SST software package. For license
 // information, see the LICENSE file in the top level directory of the
 // distribution.
+#include <sst/core/output.h>
+
 #include <sst_config.h>
 
 #include "portControl.h"
@@ -31,12 +33,28 @@ using namespace Interfaces;
 void
 PortControl::recvCtrlEvent(CtrlRtrEvent* ev)
 {
-    // This packet is for me.  An endpoint is telling me they're done
-    // sending data.
-    CongestionEvent* cev = static_cast<CongestionEvent*>(ev);
-    int src = cev->getTarget();
-    auto cs = congestion_map.find(src);
-    if ( cs != congestion_map.end() ) cs->second.reported_done = true;
+    switch (ev->getCtrlType()) {
+    case CtrlRtrEvent::CONGESTION:
+        {
+            // This packet is for me.  An endpoint is telling me they're done
+            // sending data.
+            CongestionEvent* cev = static_cast<CongestionEvent*>(ev);
+            int src = cev->getTarget();
+            auto cs = congestion_map.find(src);
+            if ( cs != congestion_map.end() ) cs->second.reported_done = true;
+            break;
+        }
+    case CtrlRtrEvent::RECONFIG:
+        {
+            ReconfigEvent* rev = static_cast<ReconfigEvent*>(ev);
+            link_bw = rev->getNewLinkBW();
+            output.output("PortControl::recvCtrlEvent -- router %d port %d -- new BW %f\n", rtr_id, port_number, link_bw.getDoubleValue());
+            break;
+        }
+    default:
+        break;
+    }
+    
 }
 
 void
@@ -251,7 +269,8 @@ PortControl::PortControl(ComponentId_t cid, Params& params,  Router* rif, int rt
     cm_activated(false),
     current_incast(0),
     total_flits_incoming(0),
-    total_incast_flits(0)
+    total_incast_flits(0),
+    reconfig_link(false)
 {
     // Process the parameters
 
@@ -327,11 +346,27 @@ PortControl::PortControl(ComponentId_t cid, Params& params,  Router* rif, int rt
 
 	// This is the self link to enable the logic for adaptive link widths.
 	// The initial call to the handler dynlink_timing->send is made in setup.
-	dynlink_timing = configureSelfLink(link_port_name + "_dynlink_timing", "10us",
+    // FL: 
+	dynlink_timing = configureSelfLink(link_port_name + "_dynlink_timing", "2us",
                                        new Event::Handler<PortControl>(this,&PortControl::handleSAIWindow));
 
+    // FL: may be used for reconfiguring
 	disable_timing = configureSelfLink(link_port_name + "_disable_timing", "1us",
                                        new Event::Handler<PortControl>(this,&PortControl::reenablePort));
+
+    // FL:
+    std::string reconfig_link_str = params.find<std::string>("reconfig_link","0");
+    if (reconfig_link_str == "1") {
+        reconfig_link = true;
+    }
+    if (reconfig_link) {
+        std::string monitor_window_str = params.find<std::string>("monitor_window");
+        monitor_window_timing = stoi(monitor_window_str);
+
+        monitor_window = configureSelfLink(link_port_name + "_reconfig_link_timing", monitor_window_str,
+                                       new Event::Handler<PortControl>(this,&PortControl::handleMonitorWindow));
+    }
+
     connected = true;
 
     if ( port_link == NULL ) {
@@ -387,6 +422,11 @@ PortControl::PortControl(ComponentId_t cid, Params& params,  Router* rif, int rt
     UnitAlgebra mtu = params.find<UnitAlgebra>("mtu", "2kB");
     if ( mtu.hasUnits("B") ) mtu *= UnitAlgebra("8b/B");
 
+    // FL: set up statistics for congestion based reconfiguration
+    total_send_bit_count = 0;
+    monitor_window_bits_sent = 0;
+    monitor_window_tp = 0;
+
     // Get the serialization time for an mtu
     TimeConverter* tc = getTimeConverter(mtu / link_bw);
     mtu_ser_time = tc->getFactor();
@@ -401,6 +441,7 @@ PortControl::PortControl(ComponentId_t cid, Params& params,  Router* rif, int rt
     cm_window_factor = 1.5;
 
     // Register statistics
+    // FL: ToDo
     std::string port_name("port");
     port_name = port_name + std::to_string(port_number);
 
@@ -420,7 +461,6 @@ PortControl::PortControl(ComponentId_t cid, Params& params,  Router* rif, int rt
 	sai_win_length_nano = sai_win_length * 1000 * 1000 * 1000;
 	sai_win_length_pico = sai_win_length_nano * 1000;
 
-	// reasonable values for IB are 4 or 12
 	max_link_width = 4;
 	cur_link_width = max_link_width;
 
@@ -562,6 +602,9 @@ PortControl::setup() {
         output_timing->replaceFunctor(new Event::Handler<PortControl>(this,&PortControl::handle_failed));
     }
 	if (dlink_thresh >= 0) dynlink_timing->send(1,NULL);
+
+    // FL:
+    if (reconfig_link) monitor_window->send(1,NULL);
     while ( init_events.size() ) {
         delete init_events.front();
         init_events.pop_front();
@@ -629,7 +672,7 @@ PortControl::init(unsigned int phase) {
     case 0:
         // Negotiate link speed.  We will take the min of the two link speeds
         init_ev = new RtrInitEvent();
-        init_ev->command = RtrInitEvent::REPORT_BW;
+        init_ev->command = RtrInitEvent::REPORT_BW;  
         init_ev->ua_value = link_bw;
 
         port_link->sendUntimedData(init_ev);
@@ -665,7 +708,12 @@ PortControl::init(unsigned int phase) {
         // will be the minumum the two sides
         ev = port_link->recvUntimedData();
         init_ev = checkInitProtocol(ev, RtrInitEvent::REPORT_BW, CALL_INFO);
-        if ( link_bw > init_ev->ua_value ) link_bw = init_ev->ua_value;
+
+        // FL:
+        if (!reconfig_link) {
+            if ( link_bw > init_ev->ua_value ) link_bw = init_ev->ua_value;
+        }
+
 
         // Initialize links (or rather, reset the TimeBase to get the
         // right BW).
@@ -1149,6 +1197,8 @@ PortControl::handle_output(Event* ev) {
 	    }
         send_bit_count->addData(send_event->getEncapsulatedEvent()->getSizeInBits());
         send_packet_count->addData(1);
+        // FL:
+        total_send_bit_count += send_event->getEncapsulatedEvent()->getSizeInBits();
 
         // Send the request to all the registered NetworkInspectors
         for ( unsigned int i = 0; i < network_inspectors.size(); i++ ) {
@@ -1215,12 +1265,42 @@ PortControl::reenablePort(Event* ev) {
 	sai_port_disabled = false;
 }
 
+// FL:
+void
+PortControl::handleMonitorWindow(Event* ev) {
+    output.output("PortControl::handleMonitorWindow -- hr_router %d\n", rtr_id); 
+
+    monitor_window_bits_sent = total_send_bit_count - monitor_window_bits_sent;
+    monitor_window_tp = monitor_window_bits_sent / monitor_window_timing;
+
+    output.output("    --> Port %d -- window_bits_sent %d -- window_tp %f, total_bits_sent %d\n", port_number, monitor_window_bits_sent, monitor_window_tp, total_send_bit_count); 
+
+    MonitorEvent* mev = new MonitorEvent(monitor_window_tp);
+    
+    // ? for control planes accross multiple routers
+    // cev->setEndpointDest(x.first);
+    
+    parent->recvCtrlEvent(port_number, mev);
+
+    //link_bw += 100;
+
+    //UnitAlgebra link_clock = link_bw / flit_size;
+    //TimeConverter* tc = getTimeConverter(link_clock);
+    //output_timing->setDefaultTimeBase(tc);
+
+    // add a delay before messages can transmit on the link
+    //disable_timing->send(1,NULL);
+
+    //output.output("    --> Port %d -- BW : %s\n", port_number, link_bw.toStringBestSI().c_str()); 
+
+    monitor_window->send(1,NULL);
+}
+
 // Triggered every window duration of time
 // This resets SAI metrics and calls increase/decreaseLinkWidth
 void
 PortControl::handleSAIWindow(Event* ev) {
 	SimTime_t cur_time = getCurrentSimCycle();
-	// If we are in the middle of an active state.
 
 	// If we are in the middle of an idle state.
 	if (is_idle){
@@ -1260,6 +1340,8 @@ PortControl::handleSAIWindow(Event* ev) {
 // TODO add delay on port, before it can transmit data again.
 bool
 PortControl::decreaseLinkWidth() {
+    output.output("Port %d -- decreaseLinkWidth ", port_number); 
+
     // We don't want to reduce the link width below 1
     if ( cur_link_width == max_link_width ) {
         cur_link_width = cur_link_width/2;
@@ -1271,9 +1353,11 @@ PortControl::decreaseLinkWidth() {
         // I need to add a delay before messages can transmit on the link
         disable_timing->send(1,NULL);
         sai_port_disabled = true;
+        output.output("new BW: %s\n", link_bw.toStringBestSI().c_str()); 
         return true;
     }
-    else return false;
+    output.output("no BW change\n"); 
+    return false;
 
 }
 
@@ -1287,6 +1371,7 @@ PortControl::decreaseLinkWidth() {
 bool
 PortControl::increaseLinkWidth()
 {
+    output.output("Port %d -- increaseLinkWidth ", port_number); 
     // We don't want to increase the link width above the max_link_width
     if ( cur_link_width < max_link_width ) {
         cur_link_width = max_link_width;
@@ -1298,10 +1383,11 @@ PortControl::increaseLinkWidth()
         // I need to add a delay before messages can transmit on the link
         disable_timing->send(1,NULL);
         sai_port_disabled = true;
+        output.output("new BW: %s\n", link_bw.toStringBestSI().c_str()); 
         return true;
     }
-
-    else return false;
+    output.output("no BW change\n"); 
+    return false;
 }
 
 

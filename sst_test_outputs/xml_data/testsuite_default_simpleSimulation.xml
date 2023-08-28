@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<testsuites disabled="0" errors="0" failures="0" tests="1" time="0.35913586616516113" name="SST TESTING FRAMEWORKS">
+	<testsuite disabled="0" errors="0" failures="0" name="testsuite_default_simpleSimulation" skipped="0" tests="1" time="0.35913586616516113">
+		<testcase name="test_simplesimulation_carwash" time="0.359136" timestamp="2023_0816_22:00:53.269139 utc" classname="testcase_simpleSimulation"/>
+	</testsuite>
+</testsuites>

@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<testsuites disabled="0" errors="0" failures="0" tests="2" time="23.88346219062805" name="SST TESTING FRAMEWORKS">
+	<testsuite disabled="0" errors="0" failures="0" name="testsuite_default_shogun" skipped="0" tests="2" time="23.88346219062805">
+		<testcase name="test_shogun_basic_miranda" time="6.739076" timestamp="2023_0816_22:00:25.446372 utc" classname="testcase_shogun"/>
+		<testcase name="test_shogun_hierarchy_test" time="17.144386" timestamp="2023_0816_22:00:32.185574 utc" classname="testcase_shogun"/>
+	</testsuite>
+</testsuites>

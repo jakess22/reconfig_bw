@@ -56,6 +56,12 @@ public:
         {"topology",           "Name of the topology subcomponent that should be loaded to control routing."},
         {"xbar_arb",           "Arbitration unit to be used for crossbar.","merlin.xbar_arb_lru"},
         {"link_bw",            "Bandwidth of the links specified in either b/s or B/s (can include SI prefix)."},
+        
+        // FL:
+        {"reconfig_rtr",        "Set to 1 if reconfigurable BW router, 0 if not.", "false"},
+        {"max_rtr_bw",           "Aggregate BW of a reconfigurable router.", "0"},
+        {"monitor_window", "If a reconfig_rtr, timing window to launch Monitor Events in router's PortControls", "0"},
+
         {"flit_size",          "Flit size specified in either b or B (can include SI prefix)."},
         {"xbar_bw",            "Bandwidth of the crossbar specified in either b/s or B/s (can include SI prefix)."},
         {"input_latency",      "Latency of packets entering switch into input buffers.  Specified in s (can include SI prefix)."},
@@ -137,6 +143,12 @@ private:
 
     Shared::SharedArray<int> shared_array;
 
+    // FL: maximum aggregate bw for a reconfigurable router
+    bool reconfig_rtr;
+    UnitAlgebra max_rtr_bw;
+    UnitAlgebra* port_bws;
+    double* port_window_tp;
+
 public:
     hr_router(ComponentId_t cid, Params& params);
     ~hr_router();
@@ -152,6 +164,8 @@ public:
 
     void sendCtrlEvent(CtrlRtrEvent* ev, int port = -1);
     void recvCtrlEvent(int port, CtrlRtrEvent* ev);
+    // FL:
+    void recvMonitorEvent(int port, MonitorEvent* mev);
 
     void dumpState(std::ostream& stream);
     void printStatus(Output& out);

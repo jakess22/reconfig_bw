@@ -193,7 +193,7 @@ private:
 class CtrlRtrEvent : public BaseRtrEvent {
 
 public:
-    enum CtrlRtrEventType {CONGESTION, TOPOLOGY};
+    enum CtrlRtrEventType {CONGESTION, TOPOLOGY, PORT_MONITOR, RECONFIG};
 
 private:
     CtrlRtrEventType ctrl_type;
@@ -337,6 +337,66 @@ public:
     }
 
     ImplementSerializable(SST::Merlin::TopologyEvent);
+};
+
+// FL:
+class MonitorEvent : public CtrlRtrEvent {
+private:
+    double window_tp;
+public:
+
+    MonitorEvent(double window_tp) :
+        CtrlRtrEvent(CtrlRtrEvent::PORT_MONITOR, size_in_flits), 
+        window_tp(window_tp)
+    {}
+
+    MonitorEvent() :
+        CtrlRtrEvent(CtrlRtrEvent::PORT_MONITOR, 0),
+        window_tp(window_tp)
+    {}
+
+    inline double getWindowTP() { return window_tp; }
+
+    virtual void print(const std::string& header, Output &out) const  override {
+        out.output("%s MonitorEvent to be delivered at %" PRIu64 " with priority %d\n",
+                header.c_str(), getDeliveryTime(), getPriority());
+    }
+
+    void serialize_order(SST::Core::Serialization::serializer &ser)  override {
+        CtrlRtrEvent::serialize_order(ser);
+    }
+
+    ImplementSerializable(SST::Merlin::MonitorEvent);
+};
+
+// FL:
+class ReconfigEvent : public CtrlRtrEvent {
+private:
+    UnitAlgebra new_link_bw;
+public:
+
+    ReconfigEvent(UnitAlgebra new_link_bw) :
+        CtrlRtrEvent(CtrlRtrEvent::RECONFIG, size_in_flits),
+        new_link_bw(new_link_bw)
+    {}
+
+    ReconfigEvent() :
+        CtrlRtrEvent(CtrlRtrEvent::RECONFIG, 0),
+        new_link_bw(new_link_bw)
+    {}
+
+    inline UnitAlgebra getNewLinkBW() { return new_link_bw; }
+
+    virtual void print(const std::string& header, Output &out) const  override {
+        out.output("%s ReconfigEvent to be delivered at %" PRIu64 " with priority %d\n",
+                header.c_str(), getDeliveryTime(), getPriority());
+    }
+
+    void serialize_order(SST::Core::Serialization::serializer &ser)  override {
+        CtrlRtrEvent::serialize_order(ser);
+    }
+
+    ImplementSerializable(SST::Merlin::ReconfigEvent);
 };
 
 

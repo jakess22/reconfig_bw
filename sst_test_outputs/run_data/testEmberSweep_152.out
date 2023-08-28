@@ -1,0 +1,11 @@
+EMBER: using param directory: paramFiles
+EMBER: platform: default
+EMBER: network: topology=dragonfly shape=8:8:4:8
+EMBER: numNodes=512 numNics=512
+EMBER: network: BW=4GB/s pktSize=2048B flitSize=8B
+EMBER: Job=0, nidList='0-511'
+EMBER: Motif='Init'
+EMBER: Motif='AllPingPong iterations=10 messageSize=10000'
+EMBER: Motif='Fini'
+AllPingPong: total time 423.284 us, loop 10, bufLen 10000, latency 21.164 us. bandwidth 0.472496 GB/s
+Simulation is complete, simulated time: 500.404 us

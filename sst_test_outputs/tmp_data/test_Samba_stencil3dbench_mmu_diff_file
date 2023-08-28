@@ -1,0 +1,36 @@
+--- /home/jakess22/reconfig_bw/sst_test_outputs/run_data/test_Samba_stencil3dbench_mmu.out
++++ /home/jakess22/reconfig_bw/src/sst/elements/Samba/tests/refFiles/test_Samba_stencil3dbench_mmu.out
+@@ -1,17 +1,17 @@
+-0:cpu:RequestGenCPU[RequestGenCPU:43]: Configured CPU to allow 16 maximum Load requests to be memory to be outstanding.
+-0:cpu:RequestGenCPU[RequestGenCPU:45]: Configured CPU to allow 16 maximum Store requests to be memory to be outstanding.
+-0:cpu:RequestGenCPU[RequestGenCPU:47]: Configured CPU to allow 16 maximum Custom requests to be memory to be outstanding.
+-0:cpu:RequestGenCPU[RequestGenCPU:54]: CPU clock configured for 2GHz
+-0:cpu:RequestGenCPU[RequestGenCPU:60]: Memory interface to be loaded is: memHierarchy.standardInterface
+-0:cpu:RequestGenCPU[RequestGenCPU:75]: Loaded memory interface successfully.
+-0:cpu:RequestGenCPU[RequestGenCPU:103]: Generator loaded successfully.
+-0:cpu:RequestGenCPU[RequestGenCPU:159]: Miranda CPU Configuration:
+-0:cpu:RequestGenCPU[RequestGenCPU:160]: - Max requests per cycle:         2
+-0:cpu:RequestGenCPU[RequestGenCPU:161]: - Max reorder lookups             16
+-0:cpu:RequestGenCPU[RequestGenCPU:162]: - Clock:                          2GHz
+-0:cpu:RequestGenCPU[RequestGenCPU:163]: - Cache line size:                64 bytes
+-0:cpu:RequestGenCPU[RequestGenCPU:164]: - Max Load requests pending:      16
+-0:cpu:RequestGenCPU[RequestGenCPU:165]: - Max Store requests pending:     16
+-0:cpu:RequestGenCPU[RequestGenCPU:166]: - Max Custom requests pending:     16
+-0:cpu:RequestGenCPU[RequestGenCPU:167]: Configuration completed.
++0:cpu:RequestGenCPU[RequestGenCPU:44]: Configured CPU to allow 16 maximum Load requests to be memory to be outstanding.
++0:cpu:RequestGenCPU[RequestGenCPU:46]: Configured CPU to allow 16 maximum Store requests to be memory to be outstanding.
++0:cpu:RequestGenCPU[RequestGenCPU:48]: Configured CPU to allow 16 maximum Custom requests to be memory to be outstanding.
++0:cpu:RequestGenCPU[RequestGenCPU:55]: CPU clock configured for 2GHz
++0:cpu:RequestGenCPU[RequestGenCPU:60]: Memory interface to be loaded is: memHierarchy.memInterface
++0:cpu:RequestGenCPU[RequestGenCPU:73]: Loaded memory interface successfully.
++0:cpu:RequestGenCPU[RequestGenCPU:101]: Generator loaded successfully.
++0:cpu:RequestGenCPU[RequestGenCPU:157]: Miranda CPU Configuration:
++0:cpu:RequestGenCPU[RequestGenCPU:158]: - Max requests per cycle:         2
++0:cpu:RequestGenCPU[RequestGenCPU:159]: - Max reorder lookups             16
++0:cpu:RequestGenCPU[RequestGenCPU:160]: - Clock:                          2GHz
++0:cpu:RequestGenCPU[RequestGenCPU:161]: - Cache line size:                64 bytes
++0:cpu:RequestGenCPU[RequestGenCPU:162]: - Max Load requests pending:      16
++0:cpu:RequestGenCPU[RequestGenCPU:163]: - Max Store requests pending:     16
++0:cpu:RequestGenCPU[RequestGenCPU:164]: - Max Custom requests pending:     16
++0:cpu:RequestGenCPU[RequestGenCPU:165]: Configuration completed.
+ memory, WARNING: Memories no longer inherit address regions from directories and no region parameters (addr_range_start, addr_range_end, interleave_size, interleave_step) were detected. All addresses will map to this memory: if this is intended, you may ignore this warning or set addr_range_start to 0 in your input deck to eliminate this warning.

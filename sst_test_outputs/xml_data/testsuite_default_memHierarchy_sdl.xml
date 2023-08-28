@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<testsuites disabled="0" errors="0" failures="0" tests="17" time="2252.9775054454803" name="SST TESTING FRAMEWORKS">
+	<testsuite disabled="0" errors="0" failures="0" name="testsuite_default_memHierarchy_sdl" skipped="2" tests="17" time="2252.9775054454803">
+		<testcase name="test_memHierarchy_sdl2_1" time="0.429053" timestamp="2023_0816_21:57:27.786940 utc" classname="testcase_memHierarchy_sdl"/>
+		<testcase name="test_memHierarchy_sdl3_1" time="0.480423" timestamp="2023_0816_21:57:28.216072 utc" classname="testcase_memHierarchy_sdl"/>
+		<testcase name="test_memHierarchy_sdl3_2" time="0.496910" timestamp="2023_0816_21:57:28.696579 utc" classname="testcase_memHierarchy_sdl"/>
+		<testcase name="test_memHierarchy_sdl3_3" time="0.451824" timestamp="2023_0816_21:57:29.193577 utc" classname="testcase_memHierarchy_sdl"/>
+		<testcase name="test_memHierarchy_sdl4_1" time="0.427881" timestamp="2023_0816_21:57:29.645512 utc" classname="testcase_memHierarchy_sdl"/>
+		<testcase name="test_memHierarchy_sdl4_2" time="0.406591" timestamp="2023_0816_21:57:30.073514 utc" classname="testcase_memHierarchy_sdl"/>
+		<testcase name="test_memHierarchy_sdl4_2_ramulator" time="1121.241748" timestamp="2023_0816_21:57:30.480194 utc" classname="testcase_memHierarchy_sdl">
+			<skipped type="skipped" message="RAMULATOR is not included as part of this build"/>
+		</testcase>
+		<testcase name="test_memHierarchy_sdl5_1" time="0.502235" timestamp="2023_0816_21:57:30.480262 utc" classname="testcase_memHierarchy_sdl"/>
+		<testcase name="test_memHierarchy_sdl5_1_ramulator" time="1121.744091" timestamp="2023_0816_21:57:30.982548 utc" classname="testcase_memHierarchy_sdl">
+			<skipped type="skipped" message="RAMULATOR is not included as part of this build"/>
+		</testcase>
+		<testcase name="test_memHierarchy_sdl8_1" time="0.719412" timestamp="2023_0816_21:57:30.982612 utc" classname="testcase_memHierarchy_sdl"/>
+		<testcase name="test_memHierarchy_sdl8_3" time="1.417709" timestamp="2023_0816_21:57:31.702080 utc" classname="testcase_memHierarchy_sdl"/>
+		<testcase name="test_memHierarchy_sdl8_4" time="0.619090" timestamp="2023_0816_21:57:33.119874 utc" classname="testcase_memHierarchy_sdl"/>
+		<testcase name="test_memHierarchy_sdl9_1" time="0.534595" timestamp="2023_0816_21:57:33.739051 utc" classname="testcase_memHierarchy_sdl"/>
+		<testcase name="test_memHierarchy_sdl9_2" time="2.230961" timestamp="2023_0816_21:57:34.273730 utc" classname="testcase_memHierarchy_sdl"/>
+		<testcase name="test_memHierarchy_sdl_1" time="0.452773" timestamp="2023_0816_21:57:36.504778 utc" classname="testcase_memHierarchy_sdl"/>
+		<testcase name="test_memHierarchy_sdl_2" time="0.415838" timestamp="2023_0816_21:57:36.957660 utc" classname="testcase_memHierarchy_sdl"/>
+		<testcase name="test_memHierarchy_sdl_3" time="0.406370" timestamp="2023_0816_21:57:37.373622 utc" classname="testcase_memHierarchy_sdl"/>
+	</testsuite>
+</testsuites>
