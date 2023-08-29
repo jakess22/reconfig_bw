@@ -45,9 +45,16 @@ PortControl::recvCtrlEvent(CtrlRtrEvent* ev)
             break;
         }
     case CtrlRtrEvent::RECONFIG:
-        {
+        {        
+            // reconfigurable_bw:
             ReconfigEvent* rev = static_cast<ReconfigEvent*>(ev);
+            
             link_bw = rev->getNewLinkBW();
+            // updates simulated time on link
+            UnitAlgebra link_clock = link_bw / flit_size;
+            TimeConverter* tc = getTimeConverter(link_clock);
+            output_timing->setDefaultTimeBase(tc);
+
             output.output("PortControl::recvCtrlEvent -- router %d port %d -- new BW %f\n", rtr_id, port_number, link_bw.getDoubleValue());
             break;
         }
@@ -346,15 +353,13 @@ PortControl::PortControl(ComponentId_t cid, Params& params,  Router* rif, int rt
 
 	// This is the self link to enable the logic for adaptive link widths.
 	// The initial call to the handler dynlink_timing->send is made in setup.
-    // FL: 
 	dynlink_timing = configureSelfLink(link_port_name + "_dynlink_timing", "2us",
                                        new Event::Handler<PortControl>(this,&PortControl::handleSAIWindow));
 
-    // FL: may be used for reconfiguring
 	disable_timing = configureSelfLink(link_port_name + "_disable_timing", "1us",
                                        new Event::Handler<PortControl>(this,&PortControl::reenablePort));
 
-    // FL:
+    // reconfigurable_bw --- 
     std::string reconfig_link_str = params.find<std::string>("reconfig_link","0");
     if (reconfig_link_str == "1") {
         reconfig_link = true;
@@ -363,9 +368,11 @@ PortControl::PortControl(ComponentId_t cid, Params& params,  Router* rif, int rt
         std::string monitor_window_str = params.find<std::string>("monitor_window");
         monitor_window_timing = stoi(monitor_window_str);
 
+        // This self-link will send Monitor events to itself every window 
         monitor_window = configureSelfLink(link_port_name + "_reconfig_link_timing", monitor_window_str,
                                        new Event::Handler<PortControl>(this,&PortControl::handleMonitorWindow));
     }
+    // --- reconfigurable_bw
 
     connected = true;
 
@@ -422,7 +429,7 @@ PortControl::PortControl(ComponentId_t cid, Params& params,  Router* rif, int rt
     UnitAlgebra mtu = params.find<UnitAlgebra>("mtu", "2kB");
     if ( mtu.hasUnits("B") ) mtu *= UnitAlgebra("8b/B");
 
-    // FL: set up statistics for congestion based reconfiguration
+    // reconfigurable_bw: set up statistics for congestion based reconfiguration
     total_send_bit_count = 0;
     monitor_window_bits_sent = 0;
     monitor_window_tp = 0;
@@ -441,7 +448,6 @@ PortControl::PortControl(ComponentId_t cid, Params& params,  Router* rif, int rt
     cm_window_factor = 1.5;
 
     // Register statistics
-    // FL: ToDo
     std::string port_name("port");
     port_name = port_name + std::to_string(port_number);
 
@@ -603,7 +609,7 @@ PortControl::setup() {
     }
 	if (dlink_thresh >= 0) dynlink_timing->send(1,NULL);
 
-    // FL:
+    // reconfigurable_bw:
     if (reconfig_link) monitor_window->send(1,NULL);
     while ( init_events.size() ) {
         delete init_events.front();
@@ -709,7 +715,7 @@ PortControl::init(unsigned int phase) {
         ev = port_link->recvUntimedData();
         init_ev = checkInitProtocol(ev, RtrInitEvent::REPORT_BW, CALL_INFO);
 
-        // FL:
+        // reconfigurable_bw:
         if (!reconfig_link) {
             if ( link_bw > init_ev->ua_value ) link_bw = init_ev->ua_value;
         }
@@ -1197,7 +1203,8 @@ PortControl::handle_output(Event* ev) {
 	    }
         send_bit_count->addData(send_event->getEncapsulatedEvent()->getSizeInBits());
         send_packet_count->addData(1);
-        // FL:
+        
+        // reconfigurable_bw:
         total_send_bit_count += send_event->getEncapsulatedEvent()->getSizeInBits();
 
         // Send the request to all the registered NetworkInspectors
@@ -1265,34 +1272,25 @@ PortControl::reenablePort(Event* ev) {
 	sai_port_disabled = false;
 }
 
-// FL:
+// reconfigurable_bw:
 void
 PortControl::handleMonitorWindow(Event* ev) {
     output.output("PortControl::handleMonitorWindow -- hr_router %d\n", rtr_id); 
 
+    // calculate window network metrics
     monitor_window_bits_sent = total_send_bit_count - monitor_window_bits_sent;
     monitor_window_tp = monitor_window_bits_sent / monitor_window_timing;
 
-    output.output("    --> Port %d -- window_bits_sent %d -- window_tp %f, total_bits_sent %d\n", port_number, monitor_window_bits_sent, monitor_window_tp, total_send_bit_count); 
+    output.output("    --> Port %d -- window_bits_sent %d -- window_tp %f, total_bits_sent %d\n\n", port_number, monitor_window_bits_sent, monitor_window_tp, total_send_bit_count); 
 
     MonitorEvent* mev = new MonitorEvent(monitor_window_tp);
     
     // ? for control planes accross multiple routers
     // cev->setEndpointDest(x.first);
     
+    // send Monitor Event to parent hr_router
     parent->recvCtrlEvent(port_number, mev);
-
-    //link_bw += 100;
-
-    //UnitAlgebra link_clock = link_bw / flit_size;
-    //TimeConverter* tc = getTimeConverter(link_clock);
-    //output_timing->setDefaultTimeBase(tc);
-
-    // add a delay before messages can transmit on the link
-    //disable_timing->send(1,NULL);
-
-    //output.output("    --> Port %d -- BW : %s\n", port_number, link_bw.toStringBestSI().c_str()); 
-
+    // send another monitor window on this port via the self-link 
     monitor_window->send(1,NULL);
 }
 

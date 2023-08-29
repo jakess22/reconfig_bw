@@ -57,7 +57,7 @@ public:
         {"xbar_arb",           "Arbitration unit to be used for crossbar.","merlin.xbar_arb_lru"},
         {"link_bw",            "Bandwidth of the links specified in either b/s or B/s (can include SI prefix)."},
         
-        // FL:
+        // reconfigurable_bw:
         {"reconfig_rtr",        "Set to 1 if reconfigurable BW router, 0 if not.", "false"},
         {"max_rtr_bw",           "Aggregate BW of a reconfigurable router.", "0"},
         {"monitor_window", "If a reconfig_rtr, timing window to launch Monitor Events in router's PortControls", "0"},
@@ -143,11 +143,11 @@ private:
 
     Shared::SharedArray<int> shared_array;
 
-    // FL: maximum aggregate bw for a reconfigurable router
+    // reconfigurable_bw: maximum aggregate bw for a reconfigurable router
     bool reconfig_rtr;
     UnitAlgebra max_rtr_bw;
-    UnitAlgebra* port_bws;
-    double* port_window_tp;
+    UnitAlgebra* port_bws; // current bw state of each port
+    double* port_window_tp; // most recent windows throughput per port
 
 public:
     hr_router(ComponentId_t cid, Params& params);
@@ -164,7 +164,8 @@ public:
 
     void sendCtrlEvent(CtrlRtrEvent* ev, int port = -1);
     void recvCtrlEvent(int port, CtrlRtrEvent* ev);
-    // FL:
+
+    // reconfigurable_bw:
     void recvMonitorEvent(int port, MonitorEvent* mev);
 
     void dumpState(std::ostream& stream);

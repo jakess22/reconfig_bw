@@ -76,7 +76,7 @@ public:
         {"cm_outstanding_threshold", "Threshold for the amount of data outstanding to a host before congestion management can trigger","2*output_buf_size"},
         {"cm_pktsize_threshold", "Minimum size of a packet to be considered part of a stream with regards to congestion management","128B"},
         {"cm_incast_threshold", "Numbr of hosts sending to an enpoint needed to trigger congestion management","6"},
-        // FL:
+        // reconfigurable_bw:
         {"reconfig_link", "Bool to specific if connected to a reconfigurable router","0"},
         {"monitor_window", "If a reconfig_link, timing window to launch reconfigure Events","0us"}
     )
@@ -111,11 +111,6 @@ private:
 	// Threshold of how idle a link is before it reduces link width 0 to 1 (negative means no link adjustments).
 	// i.e. if (idle > dlink_thresh) then reduce link width.
 	float dlink_thresh;
-
-    // FL:
-    bool reconfig_link;
-    Link* monitor_window;
-    int monitor_window_timing;
 
 	// Self link for disabling a port temporarily
 	Link* disable_timing;
@@ -313,7 +308,11 @@ private:
     int congestion_events;
     int congestion_count_at_last_throttle;
 
-    // FL: monitor window info
+    // reconfigurable_bw:
+    bool reconfig_link;
+    Link* monitor_window; // Link to send Monitor Events
+    int monitor_window_timing; // duration of monitoring
+    // monitor window info
     int total_send_bit_count;
     int monitor_window_bits_sent;
     double monitor_window_tp; // throughput
@@ -376,7 +375,7 @@ private:
 
     void updateCongestionState(internal_router_event* send_event);
 
-    // FL:
+    // reconfigurable_bw:
     void handleMonitorWindow(Event* ev);
 };
 

@@ -193,7 +193,7 @@ private:
 class CtrlRtrEvent : public BaseRtrEvent {
 
 public:
-    enum CtrlRtrEventType {CONGESTION, TOPOLOGY, PORT_MONITOR, RECONFIG};
+    enum CtrlRtrEventType {CONGESTION, TOPOLOGY, PORT_MONITOR, TRAFFIC_TOGGLE, RECONFIG};
 
 private:
     CtrlRtrEventType ctrl_type;
@@ -367,6 +367,36 @@ public:
     }
 
     ImplementSerializable(SST::Merlin::MonitorEvent);
+};
+
+// FL:
+class TrafficToggleEvent : public CtrlRtrEvent {
+private:
+    bool send_traffic;
+public:
+
+    TrafficToggleEvent(bool send_traffic) :
+        CtrlRtrEvent(CtrlRtrEvent::TRAFFIC_TOGGLE, size_in_flits), 
+        send_traffic(send_traffic)
+    {}
+
+    TrafficToggleEvent() :
+        CtrlRtrEvent(CtrlRtrEvent::TRAFFIC_TOGGLE, 0),
+        send_traffic(send_traffic)
+    {}
+
+    inline double getTrafficStatus() { return send_traffic; }
+
+    virtual void print(const std::string& header, Output &out) const  override {
+        out.output("%s MonitorEvent to be delivered at %" PRIu64 " with priority %d\n",
+                header.c_str(), getDeliveryTime(), getPriority());
+    }
+
+    void serialize_order(SST::Core::Serialization::serializer &ser)  override {
+        CtrlRtrEvent::serialize_order(ser);
+    }
+
+    ImplementSerializable(SST::Merlin::TrafficToggleEvent);
 };
 
 // FL:

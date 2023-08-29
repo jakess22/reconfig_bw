@@ -117,7 +117,7 @@ hr_router::~hr_router()
     delete topo;
     delete arb;
 
-    // FL:
+    // reconfigurable_bw:
     delete [] port_bws;
     delete [] port_window_tp;
 }
@@ -249,7 +249,8 @@ hr_router::hr_router(ComponentId_t cid, Params& params) :
         link_bw *= UnitAlgebra("8b/B");
     }
 
-    // FL: set up reconfigurable BW links. Defaults to uniform allocation and can be reconfigure during simulation
+    // reconfigurable_bw ---  
+    // set up reconfigurable BW links. Defaults to uniform allocation and can be reconfigured during simulation in response to Reconfigure Events from it's parent hr_router
     port_bws = new UnitAlgebra[num_ports];
 
     port_window_tp = new double[num_ports];
@@ -273,7 +274,7 @@ hr_router::hr_router(ComponentId_t cid, Params& params) :
         }
 
         // set all links to uniform allocations by default
-        // overriden later in simulation
+        // overriden later by Reconfigure Events from it's parent hr_router in simulation
         uniform_link_bw = max_rtr_bw;
 
         UnitAlgebra(to_string(num_ports));
@@ -285,6 +286,7 @@ hr_router::hr_router(ComponentId_t cid, Params& params) :
 
         output.output("Configuring hr_router %d -- num_ports %d -- max_rtr_bw %s -- unif_bw per link %s\n", id, num_ports, max_rtr_bw.toStringBestSI().c_str(), uniform_link_bw.toStringBestSI().c_str());
     }
+    // -- reconfigurable_bw
 
     for ( int i = 0; i < num_ports; i++ ) {
         in_port_busy[i] = 0;
@@ -301,34 +303,32 @@ hr_router::hr_router(ComponentId_t cid, Params& params) :
 
         pc_params.insert("port_name", port_name.str());
         
-        // FL: 
         if (!reconfig_rtr) 
         {
             pc_params.insert("link_bw", getLogicalGroupParam(params,topo,i,"link_bw") );
         } else 
         {
+            // --- reconfigurable_bw
+            // send calculated BW allocations to each port
             string unif_link_bw_str = uniform_link_bw.toStringBestSI().c_str();
             pc_params.insert("link_bw", unif_link_bw_str);
 
             string monitor_window_str = params.find<std::string>("monitor_window");
             pc_params.insert("monitor_window", monitor_window_str.c_str());
+            // --- reconfigurable_bw
         } 
         pc_params.insert("input_latency", getLogicalGroupParam(params,topo,i,"input_latency","0ns"));
         pc_params.insert("output_latency", getLogicalGroupParam(params,topo,i,"output_latency","0ns"));
         pc_params.insert("input_buf_size", getLogicalGroupParam(params,topo,i,"input_buf_size"));
         pc_params.insert("output_buf_size", getLogicalGroupParam(params,topo,i,"output_buf_size"));
 
-        // use for non-Flex-LION links
         if (!reconfig_rtr)
         {
-            // I think threshold is the proportion of utilization BW in the link
             pc_params.insert("dlink_thresh", getLogicalGroupParam(params,topo,i,"dlink_thresh", "-1"));
             pc_params.insert("reconfig_link", "0");
         } else 
         {
-            // FL: use for dynamic BW links --> ToDo: implement how to configure second parameter (different for each port, configurable in config file)
-            pc_params.insert("reconfig_link", "1");
-            
+            pc_params.insert("reconfig_link", "1");   
         }
         
         pc_params.insert("vn_remap_shm", vn_remap_shm);
@@ -627,12 +627,12 @@ hr_router::sendCtrlEvent(CtrlRtrEvent* ev, int port) {
     ports[port]->sendCtrlEvent(ev);
 }
 
-// FL:
+// reconfigurable_bw:
 void 
 hr_router::recvMonitorEvent(int port, MonitorEvent* mev)
 {
     output.output("hr_router %d ::CtrlRtrEvent::MONITOR_LINK received!\n", id);
-    output.output("--> Port %d -- Window TP %f \n\n", port, mev->getWindowTP());
+    output.output("    --> Port %d -- Window TP %f \n", port, mev->getWindowTP());
 
     if (num_ports == 1) {
         return;
@@ -645,6 +645,16 @@ hr_router::recvMonitorEvent(int port, MonitorEvent* mev)
         if (port_window_tp[i] < 0) return;
     }
 
+    /*
+    ToDo: Send TrafficToggle Events through Ports and end at Hosts
+    -- This will need Scott to plan. Lots of moving parts in the packet sending framework
+
+    1. The class framework is made in router.h
+    2. Each router will forward this to every host port. Upon reception, host port will pause traffic (idle)
+    3. Host ports will send confirmation of pausing to its first hop router, and then reconfiguration code below can run -- only proceed below if all traffic is paused
+    */
+
+    // - - -
     // insert arbitrary BW re-allocation algorithm
     // Che-Yu: This will be your ML 
     // --> Test Alg (Replace Me): for a n port router, creates 2n-1 segments
@@ -665,9 +675,9 @@ hr_router::recvMonitorEvent(int port, MonitorEvent* mev)
     }
 
     UnitAlgebra bw_segment("0");
-    bw_segment = max_rtr_bw / num_ports; // n 
+    bw_segment = max_rtr_bw / (num_ports * 2);
 
-    output.output("$$ hr_router %d --> Window -- max %d -- BW seg %s\n\n", id, max_port, bw_segment.toStringBestSI().c_str());
+    output.output("    --> Window link with highest TP %d -- new BW seg %s\n",max_port, bw_segment.toStringBestSI().c_str());
     
     if (max_port < 0 || max_port >= num_ports) {
         fatal(CALL_INFO_LONG,-1,"ERROR: router %d recvReconfigEvent() has out of bounds max_port\n",id);
@@ -676,16 +686,19 @@ hr_router::recvMonitorEvent(int port, MonitorEvent* mev)
     // send reconfigure event to ports
     for (int i = 0; i < num_ports; i++) {
         if (i == max_port) {
-            port_bws[max_port] = bw_segment * (num_ports / 2);
-            output.output("port %d -- new_max_BW %f\n", max_port, port_bws[max_port].getDoubleValue());
+            port_bws[max_port] = bw_segment * (num_ports);
+            output.output("    --> port %d -- new_max_BW %f\n", max_port, port_bws[max_port].getDoubleValue());
             ReconfigEvent* rev_max = new ReconfigEvent(port_bws[max_port]);
             ports[max_port]->recvCtrlEvent(rev_max);
         } else {
             port_bws[i] = bw_segment;
+            output.output("    --> port %d -- new_BW %f\n", i, port_bws[i].getDoubleValue());
             ReconfigEvent* rev = new ReconfigEvent(port_bws[i]);
             ports[i]->recvCtrlEvent(rev);
         }
     }
+    output.output("- - - End of hr_router %d BW re-allocation\n\n", id);
+
 }
 
 void
@@ -696,7 +709,7 @@ hr_router::recvCtrlEvent(int port, CtrlRtrEvent* ev) {
         // Event just gets sent on to topolgy object
         topo->recvTopologyEvent(port,static_cast<TopologyEvent*>(ev));
         break;
-    // FL:    
+    // reconfigurable_bw:    
     case CtrlRtrEvent::PORT_MONITOR: 
         recvMonitorEvent(port, static_cast<MonitorEvent*>(ev));
         break;
